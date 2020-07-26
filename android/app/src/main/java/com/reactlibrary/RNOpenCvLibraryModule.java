@@ -7,23 +7,18 @@ import com.facebook.react.bridge.Callback;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import org.opencv.core.* ;
+
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 
 import org.opencv.android.Utils;
-import org.opencv.imgcodecs.Imgcodecs;
+
 import org.opencv.imgproc.Imgproc;
 
 import android.util.Base64;
 
 import java.io.ByteArrayOutputStream;
 
-import static org.opencv.imgcodecs.Imgcodecs.IMREAD_GRAYSCALE;
-import static org.opencv.imgproc.Imgproc.ADAPTIVE_THRESH_MEAN_C;
-import static org.opencv.imgproc.Imgproc.THRESH_BINARY;
-import static org.opencv.imgproc.Imgproc.adaptiveThreshold;
-import static org.opencv.imgproc.Imgproc.threshold;
 
 public class RNOpenCvLibraryModule extends ReactContextBaseJavaModule {
 
