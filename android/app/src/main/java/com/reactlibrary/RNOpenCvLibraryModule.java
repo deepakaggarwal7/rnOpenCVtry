@@ -7,14 +7,23 @@ import com.facebook.react.bridge.Callback;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-
+import org.opencv.core.* ;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 
 import org.opencv.android.Utils;
+import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
 import android.util.Base64;
+
+import java.io.ByteArrayOutputStream;
+
+import static org.opencv.imgcodecs.Imgcodecs.IMREAD_GRAYSCALE;
+import static org.opencv.imgproc.Imgproc.ADAPTIVE_THRESH_MEAN_C;
+import static org.opencv.imgproc.Imgproc.THRESH_BINARY;
+import static org.opencv.imgproc.Imgproc.adaptiveThreshold;
+import static org.opencv.imgproc.Imgproc.threshold;
 
 public class RNOpenCvLibraryModule extends ReactContextBaseJavaModule {
 
@@ -79,5 +88,46 @@ public class RNOpenCvLibraryModule extends ReactContextBaseJavaModule {
         } catch (Exception e) {
             errorCallback.invoke(e.getMessage());
         }
+    }
+
+    public static byte[] Mat2Bytes(Mat mat){
+        byte[] b = new byte[mat.channels() * mat.cols() * mat.rows()];
+        mat.get(0, 0, b);
+        return b;
+    }
+
+    @ReactMethod
+    public void covertToBlackAndWhite(String imageAsBase64, Callback errorCallback, Callback successCallback) {
+        try {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inDither = true;
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+
+            byte[] decodedString = Base64.decode(imageAsBase64, Base64.DEFAULT);
+            Bitmap sourceBitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+
+            Mat tmp = new Mat (sourceBitmap.getWidth(), sourceBitmap.getHeight(), CvType.CV_8UC1);
+            Utils.bitmapToMat(sourceBitmap, tmp);
+
+            Mat grayMat = new Mat();
+            Imgproc.cvtColor(tmp, grayMat, Imgproc.COLOR_BGR2GRAY);
+
+
+
+            //Mat result = new Mat();
+            //adaptiveThreshold(tmp, result, 255, ADAPTIVE_THRESH_MEAN_C, THRESH_BINARY, 15, 40);
+            //byte[] newImage = Mat2Bytes(matImageGrey);
+            //String bwImage = Base64.encodeToString(decodedString,Base64.DEFAULT);
+
+            Utils.matToBitmap(grayMat, sourceBitmap);
+
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            sourceBitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+            String bwImageBas64 =  Base64.encodeToString(outputStream.toByteArray(), Base64.DEFAULT);
+            successCallback.invoke(bwImageBas64);
+        } catch(Exception e){
+            errorCallback.invoke(e.getMessage());
+        }
+
     }
 }

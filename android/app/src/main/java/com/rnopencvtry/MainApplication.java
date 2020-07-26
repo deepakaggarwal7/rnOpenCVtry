@@ -14,6 +14,8 @@ import com.reactlibrary.RNOpenCvLibraryPackage;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
+
+import android.renderscript.RenderScript;
 import android.util.Log;
 
 public class MainApplication extends Application implements ReactApplication {
@@ -32,7 +34,7 @@ public class MainApplication extends Application implements ReactApplication {
           // Packages that cannot be autolinked yet can be added manually here, for example:
           // packages.add(new MyReactNativePackage());
             Log.i("OpenCV", "returning instance");
-          new RNOpenCvLibraryPackage();
+            packages.add(new RNOpenCvLibraryPackage());
           return packages;
         }
 
@@ -70,7 +72,8 @@ public class MainApplication extends Application implements ReactApplication {
   public void onCreate() {
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
-     
+     Log.println(1,"Open","onCreatePrint");
+      Log.i("OpenCV", "onCrete");
    if (!OpenCVLoader.initDebug()) {
      Log.d("OpenCv", "Error while init");
    }
@@ -82,7 +85,7 @@ public class MainApplication extends Application implements ReactApplication {
   {
     if (!OpenCVLoader.initDebug()) {
       Log.d("OpenCV", "Internal OpenCV library not found. Using OpenCV Manager for initialization");
-      OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, mLoaderCallback);
+      OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION, this, mLoaderCallback);
     } else {
       Log.d("OpenCV", "OpenCV library found inside package. Using it!");
       mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
